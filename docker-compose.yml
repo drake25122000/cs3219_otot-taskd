@@ -1,0 +1,82 @@
+version: '2'
+services:
+  zookeeper-1:
+    image: confluentinc/cp-zookeeper:latest
+    hostname: zookeeper-1
+    ports:
+      - "13252:13252"
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 13252
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_INIT_LIMIT: 5
+      ZOOKEEPER_SYNC_LIMIT: 2
+      ZOOKEEPER_SERVERS: zookeeper-1:12888:13888;zookeeper-2:22888:23888;zookeeper-3:32888:33888
+
+  zookeeper-2:
+    image: confluentinc/cp-zookeeper:latest
+    hostname: zookeeper-2
+    ports:
+      - "23252:23252"
+    environment:
+      ZOOKEEPER_SERVER_ID: 2
+      ZOOKEEPER_CLIENT_PORT: 23252
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_INIT_LIMIT: 5
+      ZOOKEEPER_SYNC_LIMIT: 2
+      ZOOKEEPER_SERVERS: zookeeper-1:12888:13888;zookeeper-2:22888:23888;zookeeper-3:32888:33888
+
+  zookeeper-3:
+    image: confluentinc/cp-zookeeper:latest
+    hostname: zookeeper-3
+    ports:
+      - "33252:33252"
+    environment:
+      ZOOKEEPER_SERVER_ID: 3
+      ZOOKEEPER_CLIENT_PORT: 33252
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_INIT_LIMIT: 5
+      ZOOKEEPER_SYNC_LIMIT: 2
+      ZOOKEEPER_SERVERS: zookeeper-1:12888:13888;zookeeper-2:22888:23888;zookeeper-3:32888:33888
+
+  kafka-1:
+    image: confluentinc/cp-kafka:latest
+    hostname: kafka-1
+    ports:
+      - "19192:19192"
+    depends_on:
+      - zookeeper-1
+      - zookeeper-2
+      - zookeeper-3
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:13252,zookeeper-2:13252,zookeeper-3:13252
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-1:19192
+ 
+  kafka-2:
+    image: confluentinc/cp-kafka:latest
+    hostname: kafka-2
+    ports:
+      - "29292:29292"
+    depends_on:
+      - zookeeper-1
+      - zookeeper-2
+      - zookeeper-3
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:13252,zookeeper-2:13252,zookeeper-3:13252
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-2:29292
+ 
+  kafka-3:
+    image: confluentinc/cp-kafka:latest
+    hostname: kafka-3
+    ports:
+      - "39392:39392"
+    depends_on:
+      - zookeeper-1
+      - zookeeper-2
+      - zookeeper-3
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:13252,zookeeper-2:13252,zookeeper-3:13252
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-3:39392
